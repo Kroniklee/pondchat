@@ -1,0 +1,52 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function validUsername(name) {
+      return name is string && name.size() >= 2 && name.size() <= 24
+        && name.matches('^[A-Za-z0-9_]+$');
+    }
+    match /users/{uid} {
+      allow read: if signedIn();
+      allow create: if signedIn() && request.auth.uid == uid
+        && validUsername(request.resource.data.username)
+        && request.resource.data.usernameLower == request.resource.data.username.lower();
+      allow update: if signedIn() && request.auth.uid == uid
+        && validUsername(request.resource.data.username)
+        && request.resource.data.usernameLower == request.resource.data.username.lower();
+      allow delete: if signedIn() && request.auth.uid == uid;
+    }
+    match /channels/{channelId}/messages/{messageId} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.username is string
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0
+        && request.resource.data.text.size() <= 1500
+        && request.resource.data.createdAt == request.time;
+      allow update, delete: if signedIn() && resource.data.uid == request.auth.uid;
+    }
+    match /dmThreads/{threadId} {
+      allow read: if signedIn() && request.auth.uid in resource.data.members;
+      allow create: if signedIn()
+        && request.auth.uid in request.resource.data.members
+        && request.resource.data.members.size() == 2;
+      allow update, delete: if signedIn() && request.auth.uid in resource.data.members;
+      match /messages/{messageId} {
+        allow read: if signedIn()
+          && request.auth.uid in get(/databases/$(database)/documents/dmThreads/$(threadId)).data.members;
+        allow create: if signedIn()
+          && request.auth.uid in get(/databases/$(database)/documents/dmThreads/$(threadId)).data.members
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.text is string
+          && request.resource.data.text.size() > 0
+          && request.resource.data.text.size() <= 1500
+          && request.resource.data.createdAt == request.time;
+        allow update, delete: if signedIn()
+          && request.auth.uid == resource.data.uid
+          && request.auth.uid in get(/databases/$(database)/documents/dmThreads/$(threadId)).data.members;
+      }
+    }
+  }
+}

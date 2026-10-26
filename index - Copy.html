@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#171923">
+<title>PondChat</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="authView" class="auth-wrap">
+  <section class="auth-card">
+    <div class="logo">P<span>●</span></div>
+    <h1>Welcome to PondChat</h1>
+    <p class="muted">Your corner of the internet.</p>
+    <form id="authForm">
+      <label>Email<input id="email" type="email" autocomplete="email" required placeholder="you@example.com"></label>
+      <label>Password<input id="password" type="password" minlength="6" autocomplete="current-password" required placeholder="At least 6 characters"></label>
+      <label id="usernameLabel">Username <span class="muted">(for new accounts)</span><input id="username" maxlength="24" placeholder="CoolName_42" pattern="[A-Za-z0-9_]{2,24}"></label>
+      <div class="auth-actions"><button type="submit" id="signInBtn">Sign in</button><button type="button" id="signUpBtn" class="secondary">Create account</button></div>
+    </form>
+    <p id="authStatus" class="status" role="status"></p>
+    <p class="tiny">Use a nickname, not your real full name. Only chat with people you know.</p>
+  </section>
+</div>
+<div id="appView" class="app hidden">
+  <aside class="servers">
+    <div class="server active" title="PondChat">P</div><div class="server add" title="More soon">+</div>
+    <div class="server-bottom">●</div>
+  </aside>
+  <aside class="sidebar">
+    <header class="side-head"><strong>PondChat</strong><span class="live-dot">●</span></header>
+    <div class="section-title">GROUP CHANNELS <span>PUBLIC</span></div>
+    <nav id="channelNav">
+      <button class="channel selected" data-channel="general"># <span>general</span></button>
+      <button class="channel" data-channel="gaming"># <span>gaming</span></button>
+      <button class="channel" data-channel="memes"># <span>memes</span></button>
+    </nav>
+    <div class="section-title dm-title">DIRECT MESSAGES <button id="newDmBtn" title="New direct message">+</button></div>
+    <div id="dmList" class="dm-list"></div>
+    <div class="profile">
+      <div class="avatar" id="myAvatar">?</div><div class="profile-name"><strong id="myName">Loading</strong><small>Online</small></div>
+      <button id="signOutBtn" class="icon-btn" title="Sign out">↪</button>
+    </div>
+  </aside>
+  <main class="chat">
+    <header class="chat-head"><div><div class="channel-mark" id="chatMark">#</div><h2 id="chatTitle">general</h2></div><span class="head-note">Keep it kind ✦</span></header>
+    <div id="messages" class="messages"><div class="empty">Loading messages…</div></div>
+    <form id="messageForm" class="composer"><button type="button" class="plus-btn" id="emojiBtn" title="Add a smile">☺</button><input id="messageInput" maxlength="1500" autocomplete="off" placeholder="Message #general" required><button type="submit" class="send-btn" title="Send message">➤</button></form>
+    <div class="composer-note">Be respectful. Never share passwords or private information.</div>
+  </main>
+</div>
+<div id="modal" class="modal hidden"><form id="dmForm" class="modal-card"><button type="button" id="closeModal" class="close">×</button><h2>Start a DM</h2><p class="muted">Enter your friend's exact PondChat username.</p><label>Username<input id="dmUsername" autocomplete="off" required pattern="[A-Za-z0-9_]{2,24}" placeholder="FriendName"></label><p id="dmStatus" class="status"></p><button type="submit">Open conversation</button></form></div>
+<div id="toast" class="toast hidden"></div>
+<script type="module" src="app.js"></script>
+</body>
+</html>
